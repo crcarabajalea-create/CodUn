@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configurar Python
-        uses: actions/setup-python@v2
+         uses: actions/upload-artifact@v
         with:
           python-version: '3.10'
 
@@ -21,7 +21,7 @@ jobs:
         run: pyinstaller --onefile Buscador.py
 
       - name: Subir ejecutable
-        uses: actions/upload-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: BuscadorExe
           path: dist/Buscador.exe
