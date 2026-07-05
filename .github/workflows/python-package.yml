@@ -3,24 +3,28 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Descargar codigo
         uses: actions/checkout@v4
 
-      - name: Configurar Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+      - name: Instalar dependencias de Linux y Java
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libffi-dev libgdbm-dev bluez libasound2-dev libsqlite3-dev
 
-      - name: Compilar con Buildozer Oficial
-        uses: kivy/buildozer-action@v1
-        with:
-          command: buildozer -v android debug
+      - name: Instalar Cython y Buildozer
+        run: |
+          pip install --upgrade pip
+          pip install "cython<3.0.0" buildozer
+
+      - name: Compilar APK
+        run: |
+          buildozer -v android debug
 
       - name: Guardar archivo APK
         uses: actions/upload-artifact@v4
         with:
           name: Mi-Aplicacion-APK
           path: bin/*.apk
+
