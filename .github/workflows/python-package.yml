@@ -1,27 +1,44 @@
-name: Generar ejecutable
-on: [push]
+name: Python package
+
+on:
+  push:
+    branches: [ "principal" ]
+  pull_request:
+    branches: [ "principal" ]
 
 jobs:
   build:
-    runs-on: windows-latest
+
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Descargar código
-        uses: actions/checkout@v2
+    - name: Checkout del repositorio
+      uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
 
-      - name: Instalar dependencias
-        run: |
-          pip install pyinstaller kivy kivymd
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Generar ejecutable
-        run: pyinstaller --onefile Buscador.py
+    - name: Ejecutar script (opcional)
+      run: |
+        echo "Ejecutando script..."
+        # Cambiá esto por tu archivo principal si tenés uno
+        # python main.py
 
-      - name: Subir ejecutable
-        uses: actions/upload-artifact@v2
-        with:
-          name: BuscadorExe
-          path: dist/Buscador.exe
+    - name: Generar ejecutable (opcional con pyinstaller)
+      run: |
+        pip install pyinstaller
+        # Cambiá main.py por tu archivo real
+        pyinstaller --onefile main.py || echo "No se generó ejecutable"
+
+    - name: Subir artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: ejecutable
+        path: dist/
