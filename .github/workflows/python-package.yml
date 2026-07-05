@@ -2,7 +2,7 @@ name: Build APK deCH
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, principal ]
   workflow_dispatch:
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
         key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
     - name: Compilar APK con Buildozer Action
-      uses: ArtemGovorov/buildozer-action@v1
+      uses: artemgovorov/buildozer-action@v1
       id: buildozer
       with:
         command: buildozer android debug
@@ -31,4 +31,5 @@ jobs:
       with:
         name: Guiate-APK-deCH
         path: ${{ steps.buildozer.outputs.filename }}
+
 
