@@ -1,15 +1,17 @@
 name: Generar ejecutable
+
 on: [push]
 
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - name: Descargar código
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-         uses: actions/upload-artifact@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -21,7 +23,7 @@ jobs:
         run: pyinstaller --onefile Buscador.py
 
       - name: Subir ejecutable
-        uses: actions/download-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: BuscadorExe
           path: dist/Buscador.exe
