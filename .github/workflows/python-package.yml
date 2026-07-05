@@ -19,6 +19,8 @@ jobs:
           pip install "cython<3.0.0" buildozer
 
       - name: Compilar APK
+        env:
+          APP_ALLOW_ROOT: "1"
         run: |
           buildozer -v android debug
 
@@ -27,5 +29,3 @@ jobs:
         with:
           name: Mi-Aplicacion-APK
           path: bin/*.apk
-
-
