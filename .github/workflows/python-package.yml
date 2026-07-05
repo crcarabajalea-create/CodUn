@@ -1,31 +1,34 @@
-name: Generar APK de Android
-on: [push, workflow_dispatch]
+name: Build APK deCH
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Descargar codigo
-        uses: actions/checkout@v4
+    - name: Checkout del código
+      uses: actions/checkout@v4
 
-      - name: Instalar dependencias de Linux y Java
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libffi-dev libgdbm-dev bluez libasound2-dev libsqlite3-dev
+    - name: Configurar Cache de Buildozer
+      uses: actions/cache@v4
+      with:
+        path: .buildozer
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
 
-      - name: Instalar Cython y Buildozer
-        run: |
-          pip install --upgrade pip
-          pip install "cython<3.0.0" buildozer
+    - name: Compilar APK con Buildozer Action
+      uses: ArtemGovorov/buildozer-action@v1
+      id: buildozer
+      with:
+        command: buildozer android debug
+        repository_root: .
 
-      - name: Compilar APK
-        env:
-          APP_ALLOW_ROOT: "1"
-        run: |
-          buildozer -v android debug
+    - name: Subir APK como artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: Guiate-APK-deCH
+        path: ${{ steps.buildozer.outputs.filename }}
 
-      - name: Guardar archivo APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Mi-Aplicacion-APK
-          path: bin/*.apk
