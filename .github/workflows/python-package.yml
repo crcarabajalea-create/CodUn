@@ -13,23 +13,23 @@ jobs:
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    - name: Configurar Cache de Buildozer
-      uses: actions/cache@v4
-      with:
-        path: .buildozer
-        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+    - name: Instalar dependencias del sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-pip build-essential git python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev
+        sudo apt-get install -y libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav libgstreamer-plugins-base1.0-dev
+        sudo apt-get install -y cmake openjdk-17-jdk unzip zip
+        pip3 install --user --upgrade buildozer Cython virtualenv
 
-    - name: Compilar APK con Buildozer Action
-      uses: artemgovorov/buildozer-action@v1
-      id: buildozer
-      with:
-        command: buildozer android debug
-        repository_root: .
+    - name: Compilar APK con Buildozer
+      run: |
+        export PATH=$PATH:~/.local/bin
+        buildozer android debug
 
     - name: Subir APK como artefacto
       uses: actions/upload-artifact@v4
       with:
         name: Guiate-APK-deCH
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: bin/*.apk
 
 
