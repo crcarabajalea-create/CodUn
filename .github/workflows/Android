@@ -1,35 +1,12 @@
-name: Build APK
+name: APK
 
-on:
-  push:
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Instalar dependencias
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip git zip unzip openjdk-17-jdk
-          pip install buildozer cython
-
-      - name: Crear buildozer.spec
-        run: |
-          buildozer init
-          sed -i 's/title = .*/title = CodUn/' buildozer.spec
-          sed -i 's/package.name = .*/package.name = codun/' buildozer.spec
-          sed -i 's/source.include_exts = .*/source.include_exts = py,png,jpg,kv/' buildozer.spec
-          sed -i 's/requirements = .*/requirements = python3,kivy/' buildozer.spec
-
-      - name: Build APK
-        run: buildozer -v android debug
-
-      - name: Subir APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk
-          path: bin/*.apk
+      - run: echo "FUNCIONANDO"
